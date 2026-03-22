@@ -5,6 +5,7 @@ import { translations } from "../constants/translations";
 
 const settings = useSettingsStore();
 const t = computed(() => translations[settings.lang]?.about || {});
+const baseUrl = import.meta.env.BASE_URL;
 </script>
 
 <template>
@@ -14,7 +15,7 @@ const t = computed(() => translations[settings.lang]?.about || {});
         <!-- IMAGE -->
         <div class="col-lg-5 image ">
           <div class="image-wrapper">
-            <img src="/image/ozim.jpg" alt="Profile" />
+            <img :src="`${baseUrl}image/ozim.jpg`" alt="Profile" />
           </div>
         </div>
 

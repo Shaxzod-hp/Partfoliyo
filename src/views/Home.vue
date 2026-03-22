@@ -4,6 +4,7 @@ import { useSettingsStore } from "../stores/settings";
 import { translations } from "../constants/translations";
 
 const settings = useSettingsStore();
+const baseUrl = import.meta.env.BASE_URL;
 
 const t = computed(() => translations[settings.lang]?.home || {});
 const texts = computed(() => t.value.roles || []);
@@ -89,7 +90,7 @@ onUnmounted(() => {
 
         <!-- IMAGE -->
         <div class="col-lg-6 image text-center">
-          <img src="/image/image.png" alt="Profile" class="img-fluid rounded-circle border border-3 border-success"
+          <img :src="`${baseUrl}image/image.png`" alt="Profile" class="img-fluid rounded-circle border border-3 border-success"
             style="max-width: 400px" />
         </div>
       </div>
