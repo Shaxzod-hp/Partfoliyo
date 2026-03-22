@@ -7,11 +7,11 @@ const settings = useSettingsStore();
 const t = computed(() => translations[settings.lang]?.projects || { items: [] });
 
 const projects = [
-  { image: "/assets/Education.png", github: "https://github.com/RizaSoft-Group/riza-edu.git", live: "https://github.com/RizaSoft-Group/riza-edu.git" },
-  { image: "/assets/news.png", github: "https://github.com/Shaxzod-hp/Shaxzod", live: "#" },
-  { image: "/assets/admin.png", github: "https://shaxzod-hp.github.io/Iso-Uz/#/access", live: "#" },
-  { image: "/assets/Market.png", github: "https://github.com/Shaxzod-hp/Shaxzod", live: "#" },
-  { image: "/assets/CRM.png", github: "https://shaxzod-hp.github.io/Iso-Uz/#/access", live: "#" },
+  { image: "@assets/Education.png", github: "https://github.com/RizaSoft-Group/riza-edu.git", live: "https://github.com/RizaSoft-Group/riza-edu.git" },
+  { image: "@assets/news.png", github: "https://github.com/Shaxzod-hp/Shaxzod", live: "#" },
+  { image: "@assets/admin.png", github: "https://shaxzod-hp.github.io/Iso-Uz/#/access", live: "#" },
+  { image: "@assets/Market.png", github: "https://github.com/Shaxzod-hp/Shaxzod", live: "#" },
+  { image: "@assets/CRM.png", github: "https://shaxzod-hp.github.io/Iso-Uz/#/access", live: "#" },
 ];
 
 const translatedProjects = computed(() => {
