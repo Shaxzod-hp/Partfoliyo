@@ -20,152 +20,243 @@ const projects = [
   { image: crmImg, github: "https://shaxzod-hp.github.io/Iso-Uz/#/access", live: "#" },
 ];
 
-const translatedProjects = computed(() => {
-  return projects.map((p, idx) => {
-    const translation = t.value.items?.[idx] || {};
-    return {
-      ...p,
-      title: translation.title || "Project Title",
-      desc: translation.desc || "Project Description"
-    };
-  });
-}); 
+const translatedProjects = computed(() =>
+  projects.map((p, idx) => ({
+    ...p,
+    title: t.value.items?.[idx]?.title || "Project Title",
+    desc: t.value.items?.[idx]?.desc || "Project Description",
+  }))
+);
+
+// 3D tilt handler
+function onMouseMove(e) {
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const cx = rect.width / 2;
+  const cy = rect.height / 2;
+  const rotX = ((y - cy) / cy) * -8;
+  const rotY = ((x - cx) / cx) * 8;
+  card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.03,1.03,1.03)`;
+}
+
+function onMouseLeave(e) {
+  e.currentTarget.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
+}
 </script>
 
 <template>
-  <section id="project" class="projects-section d-flex align-items-center">
-    <div class="container content">
+  <div class="projects-section">
+    <div class="container">
       <!-- TITLE -->
-      <div class="text-center mb-5">
-        <p class="text-success">{{ t.title }}</p>
-        <h2 class="fw-bold text-color">{{ t.subtitle }}</h2>
+      <div class="text-center mb-5 section-header">
+        <p class="section-title">{{ t.title }}</p>
+        <h2 class="section-heading">{{ t.subtitle }}</h2>
+        <div class="title-line"></div>
       </div>
 
       <!-- PROJECT GRID -->
-      <div class="row g-5">
-        <div v-for="(project, index) in translatedProjects" :key="index" class="col-lg-4 col-md-6">
-          <div class="project-card">
-            <img :src="project.image" alt="" />
+      <div class="row g-4">
+        <div v-for="(project, index) in translatedProjects" :key="index" class="col-lg-4 col-md-6"
+          :style="{ animationDelay: (index * 0.1) + 's' }">
+          <div class="project-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
+            <!-- Image -->
+            <div class="project-img-wrapper">
+              <img :src="project.image" :alt="project.title" />
+              <div class="img-overlay"></div>
+            </div>
 
-            <div class="project-overlay">
-              <h4>{{ project.title }}</h4>
-
-              <p>{{ project.desc }}</p>
-
-              <div class="buttons">
-                <a :href="project.live" target="_blank" class="btn btn-danger btn-sm">
+            <!-- Content -->
+            <div class="project-content">
+              <div class="project-number">{{ String(index + 1).padStart(2, '0') }}</div>
+              <h4 class="project-title">{{ project.title }}</h4>
+              <p class="project-desc">{{ project.desc }}</p>
+              <div class="project-actions">
+                <a :href="project.live" target="_blank" class="action-btn action-live">
+                  <i class="bi bi-box-arrow-up-right"></i>
                   {{ t.btn_live }}
                 </a>
-
-                <a :href="project.github" target="_blank" class="btn btn-outline-success btn-sm">
+                <a :href="project.github" target="_blank" class="action-btn action-github">
+                  <i class="bi bi-github"></i>
                   {{ t.btn_github }}
                 </a>
               </div>
             </div>
+
+            <!-- Glow on hover -->
+            <div class="card-glow"></div>
           </div>
         </div>
       </div>
+
     </div>
-  </section>
+  </div>
 </template>
 
 <style scoped>
+/* ─── SECTION ─── */
 .projects-section {
   background: transparent;
+  padding: 100px 0;
 }
 
+/* ─── HEADER ─── */
+.section-header {
+  animation: fadeInDown 0.8s ease both;
+}
+
+.title-line {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #00cfff);
+  border-radius: 3px;
+  margin: 16px auto 0;
+}
+
+/* ─── CARD ─── */
 .project-card {
   position: relative;
-  overflow: hidden;
-  border-radius: 15px;
   background: var(--card-bg);
-  animation: fadeInUp 0.8s ease backwards;
-}
-
-/* Staggered delays */
-.col-lg-4:nth-child(1) .project-card {
-  animation-delay: 0.1s;
-}
-
-.col-lg-4:nth-child(2) .project-card {
-  animation-delay: 0.2s;
-}
-
-.col-lg-4:nth-child(3) .project-card {
-  animation-delay: 0.3s;
-}
-
-.col-lg-4:nth-child(4) .project-card {
-  animation-delay: 0.4s;
-}
-
-.col-lg-4:nth-child(5) .project-card {
-  animation-delay: 0.5s;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  animation: fadeInUp 0.7s ease both;
+  cursor: pointer;
+  will-change: transform;
 }
 
 .project-card:hover {
-  box-shadow: 0 10px 50px rgba(25, 135, 84, 0.3);
-
+  border-color: var(--accent);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px var(--accent-glow);
 }
 
-.project-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  object-position: left;
-  background-position: left;
-  transition: 0.4s;
-}
-
-.project-overlay {
+/* hover glow overlay */
+.card-glow {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 50%, var(--accent-dim), transparent 70%);
   opacity: 0;
-  transition: 0.4s;
+  transition: opacity 0.35s;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.project-overlay h4 {
-  color: white;
-}
-
-.project-overlay p {
-  color: #ccc;
-  font-size: 14px;
-}
-
-.buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-}
-
-.project-card:hover img {
-  transform: scale(1.1);
-}
-
-.project-card:hover .project-overlay {
+.project-card:hover .card-glow {
   opacity: 1;
 }
 
-.text-color {
+/* ─── IMAGE ─── */
+.project-img-wrapper {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.project-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  transition: transform 0.5s ease;
+  display: block;
+}
+
+.project-card:hover .project-img-wrapper img {
+  transform: scale(1.08);
+}
+
+.img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(7, 9, 30, 0.7) 100%);
+}
+
+/* ─── CONTENT ─── */
+.project-content {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+
+.project-number {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.project-title {
+  font-size: 1.05rem;
+  font-weight: 700;
   color: var(--text-color);
+  margin: 0 0 8px;
+  line-height: 1.3;
 }
 
-.content {
-  animation: fadeInDown 0.8s ease;
+.project-desc {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
+/* ─── BUTTONS ─── */
+.project-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: 0.25s ease;
+  border: 1.5px solid transparent;
+}
+
+.action-live {
+  background: var(--accent);
+  color: #07091e;
+  box-shadow: 0 4px 14px var(--accent-dim);
+}
+
+.action-live:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-glow);
+  color: #07091e;
+}
+
+.action-github {
+  background: transparent;
+  border-color: var(--border-color);
+  color: var(--text-muted);
+}
+
+.action-github:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ─── ANIMATIONS ─── */
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: translateY(-25px);
   }
 
   to {

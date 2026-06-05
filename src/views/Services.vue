@@ -6,115 +6,212 @@ import { translations } from "../constants/translations";
 const settings = useSettingsStore();
 const t = computed(() => translations[settings.lang]?.services || { items: [] });
 
-const getIcon = (index) => {
-  const icons = [
-    "bi-code-slash",
-    "bi-phone",
-    "bi-palette",
-    "bi-lightning-charge",
-    "bi-diagram-3",
-    "bi-speedometer2",
-  ];
-  return icons[index];
-};
+const icons = [
+  "bi-code-slash",
+  "bi-phone",
+  "bi-palette2",
+  "bi-lightning-charge",
+  "bi-diagram-3",
+  "bi-speedometer2",
+];
 </script>
 
 <template>
-  <section id="services" class="services-section">
-    <div class="container content">
+  <div class="services-section">
+    <div class="container">
       <!-- TITLE -->
-      <div class="text-center mb-5">
-        <p class="text-success mb-2 fs-5">{{ t.title }}</p>
-        <h2 class="fw-bold text-color">{{ t.subtitle }}</h2>
+      <div class="text-center mb-5 section-header">
+        <p class="section-title">{{ t.title }}</p>
+        <h2 class="section-heading">{{ t.subtitle }}</h2>
+        <div class="title-line"></div>
       </div>
 
-      <!-- SERVICES -->
+      <!-- SERVICE CARDS: 3D FLIP -->
       <div class="row g-4">
         <div v-for="(service, index) in t.items" :key="index" class="col-lg-4 col-md-6">
-          <div class="service-card text-center">
-            <i :class="['bi', getIcon(index)]"></i>
-            <h4 class="text-color">{{ service.title }}</h4>
-            <p class="text-muted-custom">
-              {{ service.desc }}
-            </p>
+          <div class="flip-card" :style="{ animationDelay: (index * 0.1) + 's' }">
+            <div class="flip-inner">
+              <!-- FRONT -->
+              <div class="flip-front">
+                <div class="card-icon-wrapper">
+                  <i :class="['bi', icons[index]]"></i>
+                  <div class="icon-glow"></div>
+                </div>
+                <h4 class="card-title">{{ service.title }}</h4>
+                <div class="card-line"></div>
+                <p class="card-hint">Hover to see more</p>
+              </div>
+              <!-- BACK -->
+              <div class="flip-back">
+                <div class="back-icon">
+                  <i :class="['bi', icons[index]]"></i>
+                </div>
+                <h4 class="card-title">{{ service.title }}</h4>
+                <p class="card-desc">{{ service.desc }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
-  </section>
+  </div>
 </template>
 
 <style scoped>
+/* ─── SECTION ─── */
 .services-section {
   background: transparent;
-  padding-top: 100px;
-  padding-bottom: 100px;
+  padding: 100px 0;
 }
 
-.service-card {
-  background: var(--card-bg);
-  padding: 40px 25px;
-  border-radius: 15px;
-  border: 1px solid var(--border-color);
-  transition: 0.4s;
+/* ─── HEADER ─── */
+.section-header {
+  animation: fadeInDown 0.8s ease both;
+}
+
+.title-line {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #00cfff);
+  border-radius: 3px;
+  margin: 16px auto 0;
+}
+
+/* ─── 3D FLIP CARD ─── */
+.flip-card {
+  height: 260px;
+  perspective: 1000px;
+  cursor: pointer;
+  animation: fadeInUp 0.7s ease both;
+}
+
+.flip-inner {
+  position: relative;
+  width: 100%;
   height: 100%;
-  animation: fadeInUp 0.8s ease backwards;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Staggered animation delays */
-.col-lg-4:nth-child(1) .service-card {
-  animation-delay: 0.1s;
+.flip-card:hover .flip-inner {
+  transform: rotateY(180deg);
 }
 
-.col-lg-4:nth-child(2) .service-card {
-  animation-delay: 0.2s;
+/* ─── FRONT / BACK ─── */
+.flip-front,
+.flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 24px;
+  border: 1px solid var(--border-color);
+  transition: border-color 0.3s;
 }
 
-.col-lg-4:nth-child(3) .service-card {
-  animation-delay: 0.3s;
+.flip-front {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
 }
 
-.col-lg-4:nth-child(4) .service-card {
-  animation-delay: 0.4s;
+.flip-back {
+  background: linear-gradient(135deg, rgba(0, 230, 118, 0.08), rgba(0, 207, 255, 0.05));
+  border-color: var(--accent);
+  transform: rotateY(180deg);
+  text-align: center;
 }
 
-.col-lg-4:nth-child(5) .service-card {
-  animation-delay: 0.5s;
+/* ─── ICON ─── */
+.card-icon-wrapper {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 18px;
 }
 
-.col-lg-4:nth-child(6) .service-card {
-  animation-delay: 0.6s;
+.card-icon-wrapper i {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  color: var(--accent);
+  z-index: 1;
 }
 
-.service-card i {
-  font-size: 40px;
-  color: #198754;
-  margin-bottom: 20px;
+.icon-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  animation: iconPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 0.4;
+  }
+}
+
+.back-icon i {
+  font-size: 1.8rem;
+  color: var(--accent);
+  margin-bottom: 10px;
   display: block;
 }
 
-.text-color {
+/* ─── CARD TEXT ─── */
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--text-color);
+  text-align: center;
+  margin: 0 0 8px;
 }
 
-.text-muted-custom {
+.card-line {
+  width: 30px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin: 8px auto;
+}
+
+.card-hint {
+  font-size: 0.75rem;
   color: var(--text-muted);
+  margin: 0;
+  letter-spacing: 0.5px;
+  opacity: 0.7;
 }
 
-.service-card:hover {
-  transform: translateY(-10px);
-  border-color: #198754;
-  box-shadow: 0 0 30px rgba(25, 135, 84, 0.3);
+.card-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin: 0;
 }
 
-.content {
-  animation: fadeInDown 0.8s ease;
-}
-
+/* ─── ANIMATIONS ─── */
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: translateY(-25px);
   }
 
   to {
