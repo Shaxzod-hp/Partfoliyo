@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useSettingsStore } from "../stores/settings";
 import { translations } from "../constants/translations";
 
@@ -22,114 +22,121 @@ function sendMessage() {
   setTimeout(() => { sent.value = false; }, 4000);
   name.value = email.value = subject.value = message.value = "";
 }
+
+onMounted(() => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  document.querySelectorAll('.animate-up').forEach(el => observer.observe(el));
+});
 </script>
 
 <template>
   <div class="contact-section">
     <div class="container">
 
-      <!-- TITLE -->
-      <div class="text-center mb-5 section-header">
-        <p class="section-title">{{ t.title }}</p>
-        <h2 class="section-heading">{{ t.subtitle }}</h2>
-        <div class="title-line"></div>
+      <!-- EDITORIAL HEADER -->
+      <div class="contact-header animate-up">
+        <h2 class="editorial-title">
+          {{ t.title }} 
+          <span class="text-accent">{{ t.subtitle }}</span> {{ t.together }}
+        </h2>
       </div>
 
-      <div class="row g-5 align-items-start mb-5">
+      <div class="row g-5 align-items-start mt-5">
 
         <!-- ── CONTACT INFO ── -->
-        <div class="col-lg-5">
-          <div class="info-panel">
-            <h4 class="info-panel-title">Let's connect</h4>
-            <p class="info-panel-subtitle">I'm open to freelance projects and full-time roles. Let me know how I can
-              help!</p>
+        <div class="col-lg-5 animate-up" style="--delay: 0.2s">
+          <div class="info-block">
+            <h4 class="info-block-title">{{ t.get_in_touch }}</h4>
+            <p class="info-block-desc">
+              {{ t.desc }}
+            </p>
 
-            <div class="info-cards">
-              <div class="info-card" v-for="(item, i) in [
-                { icon: 'bi-envelope', label: t.email, val: 'isomiddinovshaxzod007@gmail.com', href: 'mailto:isomiddinovshaxzod007@gmail.com' },
-                { icon: 'bi-telephone', label: t.phone, val: '+998 94 007 39 89', href: 'tel:+998940073989' },
-                { icon: 'bi-geo-alt', label: t.location, val: 'Tashkent, Uzbekistan', href: '#' },
-              ]" :key="i" :style="{ animationDelay: (i * 0.12) + 's' }">
-                <div class="info-card-icon">
-                  <i :class="['bi', item.icon]"></i>
-                </div>
-                <div>
-                  <span class="info-card-label">{{ item.label }}</span>
-                  <a :href="item.href" class="info-card-val">{{ item.val }}</a>
-                </div>
+            <div class="info-items mt-5">
+              <div class="info-item">
+                <span class="info-label">{{ t.email || 'EMAIL' }}</span>
+                <a href="mailto:isomiddinovshaxzod007@gmail.com" class="info-value hover-underline">isomiddinovshaxzod007@gmail.com</a>
+              </div>
+              <div class="info-item mt-4">
+                <span class="info-label">{{ t.phone || 'PHONE' }}</span>
+                <a href="tel:+998940073989" class="info-value hover-underline">+998 94 007 39 89</a>
+              </div>
+              <div class="info-item mt-4">
+                <span class="info-label">{{ t.location || 'LOCATION' }}</span>
+                <span class="info-value">Tashkent, Uzbekistan</span>
               </div>
             </div>
 
             <!-- SOCIALS -->
-            <div class="social-row mt-4">
-              <a href="https://www.linkedin.com/in/shaxzod-isomiddinov-52922b366/" class="social-pill" target="_blank">
-                <i class="bi bi-linkedin"></i><span>LinkedIn</span>
+            <div class="social-row mt-5">
+              <a href="https://www.linkedin.com/in/shaxzod-isomiddinov-52922b366/" class="social-link" target="_blank" v-magnetic="10">
+                LinkedIn
               </a>
-              <a href="https://t.me/Shaxzod_Isomiddinov" class="social-pill" target="_blank">
-                <i class="bi bi-telegram"></i><span>Telegram</span>
+              <span class="separator">/</span>
+              <a href="https://t.me/Shaxzod_Isomiddinov" class="social-link" target="_blank" v-magnetic="10">
+                Telegram
               </a>
-              <a href="https://github.com/Shaxzod-hp" class="social-pill" target="_blank">
-                <i class="bi bi-github"></i><span>GitHub</span>
+              <span class="separator">/</span>
+              <a href="https://github.com/Shaxzod-hp" class="social-link" target="_blank" v-magnetic="10">
+                GitHub
               </a>
             </div>
           </div>
         </div>
 
         <!-- ── FORM ── -->
-        <div class="col-lg-7">
-          <form class="glass-form" @submit.prevent="sendMessage" novalidate>
+        <div class="col-lg-7 animate-up" style="--delay: 0.4s">
+          <form class="minimal-form" @submit.prevent="sendMessage" novalidate>
             <!-- Success banner -->
             <div class="success-banner" v-if="sent">
               <i class="bi bi-check-circle-fill"></i>
               {{ t.success }}
             </div>
 
-            <div class="row g-3">
+            <div class="row g-4">
               <div class="col-md-6">
-                <div class="form-group">
-                  <label>{{ t.form.name }}</label>
-                  <input type="text" class="glass-input" v-model="name" :placeholder="t.form.name" required />
+                <div class="input-wrapper">
+                  <input type="text" class="minimal-input" v-model="name" placeholder=" " required />
+                  <label class="floating-label">{{ t.form.name }}</label>
+                  <div class="input-line"></div>
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="form-group">
-                  <label>{{ t.form.email }}</label>
-                  <input type="email" class="glass-input" v-model="email" :placeholder="t.form.email" required />
+                <div class="input-wrapper">
+                  <input type="email" class="minimal-input" v-model="email" placeholder=" " required />
+                  <label class="floating-label">{{ t.form.email }}</label>
+                  <div class="input-line"></div>
                 </div>
               </div>
               <div class="col-12">
-                <div class="form-group">
-                  <label>{{ t.form.subject }}</label>
-                  <input type="text" class="glass-input" v-model="subject" :placeholder="t.form.subject" />
+                <div class="input-wrapper">
+                  <input type="text" class="minimal-input" v-model="subject" placeholder=" " />
+                  <label class="floating-label">{{ t.form.subject }}</label>
+                  <div class="input-line"></div>
                 </div>
               </div>
               <div class="col-12">
-                <div class="form-group">
-                  <label>{{ t.form.message }}</label>
-                  <textarea class="glass-input" rows="5" v-model="message" :placeholder="t.form.message"
-                    required></textarea>
+                <div class="input-wrapper">
+                  <textarea class="minimal-input" rows="4" v-model="message" placeholder=" " required></textarea>
+                  <label class="floating-label">{{ t.form.message }}</label>
+                  <div class="input-line"></div>
                 </div>
               </div>
-              <div class="col-12">
-                <button type="submit" class="submit-btn">
-                  <i class="bi bi-send-fill me-2"></i>{{ t.form.submit }}
-                  <span class="btn-glow"></span>
+              <div class="col-12 mt-5">
+                <button type="submit" class="btn-primary-custom w-100 py-3" v-magnetic="5">
+                  {{ t.form.submit }} <i class="bi bi-arrow-right ms-2"></i>
                 </button>
               </div>
             </div>
           </form>
         </div>
       </div>
-
-      <!-- MAP -->
-      <div class="map-wrapper">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m19!1m8!1m3!1d22766.439149676986!2d69.28636!3d41.37533!3m2!1i1024!2i768!4f13.1!4m8!3e0!4m5!1s0x38ae8d6c57617373%3A0x4b0f7e76dfec5113!2s3A%2C%20100190%2C%20Tashkent%2C%20Uzbekistan!3m2!1d41.3782114!2d69.2812453!4m0!5e1!3m2!1sen!2sus!4v1772735412579!5m2!1sen!2sus"
-          width="100%" height="380" style="border:0" allowfullscreen loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-      </div>
-
     </div>
   </div>
 </template>
@@ -138,167 +145,124 @@ function sendMessage() {
 /* ─── SECTION ─── */
 .contact-section {
   background: transparent;
-  padding: 100px 0 60px;
+  padding: 120px 0;
+  border-top: 1px solid var(--border-color);
 }
 
 /* ─── HEADER ─── */
-.section-header {
-  animation: fadeInDown 0.8s ease both;
+.editorial-title {
+  font-size: clamp(3rem, 6vw, 6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-color);
+  margin: 0;
+  max-width: 900px;
 }
 
-.title-line {
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent), #00cfff);
-  border-radius: 3px;
-  margin: 16px auto 0;
+.text-accent {
+  color: var(--accent);
 }
 
-/* ─── INFO PANEL ─── */
-.info-panel {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 24px;
-  padding: 32px;
-  height: 100%;
-  animation: fadeInLeft 0.9s ease both;
+/* ─── INFO BLOCK ─── */
+.info-block {
+  padding-right: 40px;
 }
 
-.info-panel-title {
-  font-size: 1.3rem;
+.info-block-title {
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-color);
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
-.info-panel-subtitle {
-  font-size: 0.88rem;
+.info-block-desc {
+  font-size: 1rem;
+  line-height: 1.6;
   color: var(--text-muted);
-  line-height: 1.7;
-  margin-bottom: 24px;
 }
 
-/* ─── INFO CARDS ─── */
-.info-cards {
+.info-item {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;
 }
 
-.info-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--bg-primary, #07091e);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 14px 16px;
-  transition: 0.3s ease;
-  animation: fadeInLeft 0.7s ease both;
-  text-decoration: none;
-}
-
-.info-card:hover {
-  border-color: var(--accent);
-  background: var(--accent-dim);
-  transform: translateX(4px);
-}
-
-.info-card-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--accent-dim);
-  border: 1px solid var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-
-.info-card>div {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.info-card-label {
-  font-size: 0.72rem;
+.info-label {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 2px;
 }
 
-.info-card-val {
-  font-size: 0.88rem;
-  font-weight: 600;
+.info-value {
+  font-size: 1.2rem;
+  font-weight: 500;
   color: var(--text-color);
   text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: color 0.2s;
 }
 
-.info-card:hover .info-card-val {
-  color: var(--accent);
+.hover-underline {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
 }
 
-/* ─── SOCIAL PILLS ─── */
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.hover-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ─── SOCIALS ─── */
 .social-row {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
-.social-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 20px;
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  font-weight: 500;
+.social-link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-color);
   text-decoration: none;
-  transition: 0.25s ease;
+  transition: color 0.3s ease;
+  display: inline-block;
 }
 
-.social-pill:hover {
-  border-color: var(--accent);
+.social-link:hover {
   color: var(--accent);
-  background: var(--accent-dim);
-  transform: translateY(-2px);
 }
 
-/* ─── GLASS FORM ─── */
-.glass-form {
-  background: var(--card-bg);
+.separator {
+  color: var(--border-color);
+}
+
+/* ─── MINIMAL FORM ─── */
+.minimal-form {
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-color);
-  border-radius: 24px;
-  padding: 32px;
+  border-radius: 20px;
+  padding: 40px;
   backdrop-filter: blur(10px);
-  animation: fadeInRight 0.9s ease both;
-  position: relative;
-  overflow: hidden;
 }
 
-.glass-form::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), #00cfff);
-}
-
-/* ─── SUCCESS BANNER ─── */
 .success-banner {
   display: flex;
   align-items: center;
@@ -306,155 +270,117 @@ function sendMessage() {
   background: rgba(0, 230, 118, 0.12);
   border: 1px solid var(--accent);
   border-radius: 12px;
-  padding: 12px 16px;
+  padding: 16px;
   color: var(--accent);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  margin-bottom: 16px;
-  animation: slideDown 0.4s ease both;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ─── FORM GROUP ─── */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  margin-bottom: 24px;
 }
 
 /* ─── INPUTS ─── */
-.glass-input {
+.input-wrapper {
+  position: relative;
+  padding-top: 12px;
+}
+
+.minimal-input {
   width: 100%;
-  background: var(--bg-primary, #07091e);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 12px 0;
   color: var(--text-color);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-family: inherit;
-  transition: border-color 0.25s, box-shadow 0.25s;
   outline: none;
   resize: none;
 }
 
-.glass-input::placeholder {
-  color: var(--text-muted);
-}
-
-.glass-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-dim);
-}
-
-/* ─── SUBMIT BUTTON ─── */
-.submit-btn {
-  position: relative;
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, var(--accent), #00cfff);
-  color: #07091e;
-  font-size: 0.95rem;
-  font-weight: 700;
-  cursor: pointer;
-  overflow: hidden;
-  transition: 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px var(--accent-glow);
-}
-
-.submit-btn:active {
-  transform: translateY(0);
-}
-
-.btn-glow {
+.floating-label {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+  left: 0;
+  top: 24px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
   pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* ─── MAP ─── */
-.map-wrapper {
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: fadeInUp 0.9s ease 0.3s both;
+.minimal-input:focus ~ .floating-label,
+.minimal-input:not(:placeholder-shown) ~ .floating-label {
+  top: -4px;
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+
+.input-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.minimal-input:focus ~ .input-line {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 /* ─── ANIMATIONS ─── */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-25px);
-  }
+.animate-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--delay, 0s);
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+.animate-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 991px) {
+  .info-block {
+    padding-right: 0;
+  }
+  
+  .minimal-form {
+    padding: 24px;
   }
 }
 
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
+@media (max-width: 768px) {
+  .contact-section {
+    padding: 60px 0;
   }
 
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
+  .editorial-title {
+    font-size: clamp(1.8rem, 7vw, 2.8rem);
+    line-height: 1.1;
   }
 
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+  .info-block-title {
+    font-size: 1.2rem;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .info-value {
+    font-size: 1rem;
+    word-break: break-all;
+  }
+
+  .minimal-form {
+    padding: 20px;
+  }
+
+  .social-row {
+    gap: 12px;
   }
 }
 </style>

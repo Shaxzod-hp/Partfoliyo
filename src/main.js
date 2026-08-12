@@ -5,10 +5,13 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import App from "./App.vue";
 import router from "./router";
+import magnetic from "./directives/magnetic";
 
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
+
+app.directive('magnetic', magnetic);
 
 app.mount("#app");

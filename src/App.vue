@@ -1,4 +1,5 @@
 <script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import Navbar from "./components/Global/Navbar.vue";
 import Home from "./views/Home.vue";
 import About from "./views/About.vue";
@@ -6,25 +7,41 @@ import Contact from "./views/Contact.vue";
 import Services from "./views/Services.vue";
 import Project from "./views/Project.vue";
 import Footer from "./components/Global/Footer.vue";
+import CustomCursor from "./components/Global/CustomCursor.vue";
 
-import { useSettingsStore } from "./stores/settings";
-import { onMounted } from "vue";
+const scrollProgress = ref(0);
 
-const settings = useSettingsStore();
+const handleScroll = () => {
+  const totalScroll = document.documentElement.scrollTop;
+  const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  scrollProgress.value = `${(totalScroll / windowHeight) * 100}%`;
+};
 
 onMounted(() => {
-  settings.applyTheme();
+  window.addEventListener("scroll", handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll);
 });
 </script>
 
 <template>
+  <CustomCursor />
+  
+  <div class="scroll-progress-container">
+    <div class="scroll-progress-bar" :style="{ width: scrollProgress }"></div>
+  </div>
+
   <Navbar />
-  <!-- 3D Animated Background -->
-  <div class="bg-orbs" aria-hidden="true">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="orb orb-4"></div>
+  
+  <!-- Cinematic Background -->
+  <div class="cinematic-bg" aria-hidden="true">
+    <div class="grid-overlay"></div>
+    <div class="noise-overlay"></div>
+    <div class="glow-sphere top-right"></div>
+    <div class="glow-sphere bottom-left"></div>
+    <div class="glow-sphere center"></div>
   </div>
 
   <section id="home" class="section-wrapper">
@@ -46,6 +63,7 @@ onMounted(() => {
   <section id="contact" class="section-wrapper">
     <Contact />
   </section>
+  
   <Footer />
 </template>
 
@@ -53,40 +71,24 @@ onMounted(() => {
 /* ─── GOOGLE FONT ─── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* ─── DESIGN TOKENS ─── */
+/* ─── DESIGN TOKENS (PREMIUM DARK) ─── */
 :root {
-  --bg-primary: #07091e;
-  --bg-secondary: #0c1033;
-  --bg-gradient: linear-gradient(135deg, #07091e 0%, #0c1033 50%, #101540 100%);
-  --text-color: #f0f4ff;
-  --text-muted: #8892b0;
-  --navbar-bg: rgba(7, 9, 30, 0.85);
-  --card-bg: rgba(255, 255, 255, 0.04);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --accent: #00e676;
-  --accent-glow: rgba(0, 230, 118, 0.35);
-  --accent-dim: rgba(0, 230, 118, 0.12);
-  --purple-glow: rgba(130, 80, 255, 0.18);
-  --success-color: #00e676;
+  --bg-primary: #040509;
+  --bg-secondary: #0a0b12;
+  --bg-surface: rgba(255, 255, 255, 0.02);
+  --text-color: #f7f7f8;
+  --text-muted: #8b8d98;
+  --navbar-bg: rgba(4, 5, 9, 0.7);
+  --card-bg: rgba(255, 255, 255, 0.02);
+  --border-color: rgba(255, 255, 255, 0.06);
+  
+  /* Electric Lime Accent */
+  --accent: #ccff00;
+  --accent-glow: rgba(204, 255, 0, 0.2);
+  --accent-dim: rgba(204, 255, 0, 0.08);
 
   /* Typography */
   --font-main: 'Inter', sans-serif;
-}
-
-.light-mode {
-  --bg-primary: #f4f7ff;
-  --bg-secondary: #eef1fb;
-  --bg-gradient: linear-gradient(135deg, #f4f7ff 0%, #eef1fb 100%);
-  --text-color: #14173a;
-  --text-muted: #5a6080;
-  --navbar-bg: rgba(244, 247, 255, 0.90);
-  --card-bg: #ffffff;
-  --border-color: rgba(0, 0, 0, 0.08);
-  --accent: #00b857;
-  --accent-glow: rgba(0, 184, 87, 0.25);
-  --accent-dim: rgba(0, 184, 87, 0.1);
-  --purple-glow: rgba(100, 60, 200, 0.1);
-  --success-color: #00b857;
 }
 
 /* ─── RESET & BASE ─── */
@@ -104,91 +106,117 @@ body {
   color: var(--text-color);
   background: var(--bg-primary);
   font-family: var(--font-main);
-  transition: background 0.35s ease, color 0.35s ease;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a {
+/* Base interactive resets for custom cursor */
+a, button {
   color: inherit;
   text-decoration: none;
+  cursor: pointer; /* fallback for touch devices */
+}
+
+/* ─── CINEMATIC BACKGROUND EFFECTS ─── */
+.cinematic-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  /* Fades out the grid at the edges */
+  mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+}
+
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  background: url('data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.75%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.glow-sphere {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  pointer-events: none;
+  animation: float 20s infinite alternate ease-in-out;
+}
+
+.glow-sphere.top-right {
+  top: -10%;
+  right: -5%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, var(--accent), transparent 70%);
+  animation-delay: 0s;
+}
+
+.glow-sphere.bottom-left {
+  bottom: -20%;
+  left: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, #00cfff, transparent 70%);
+  animation-delay: -5s;
+}
+
+.glow-sphere.center {
+  top: 30%;
+  left: 20%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(204, 255, 0, 0.4), transparent 70%);
+  opacity: 0.08;
+  animation-delay: -10s;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5%, 5%) scale(1.1); }
+  66% { transform: translate(-5%, 8%) scale(0.9); }
+  100% { transform: translate(-2%, -5%) scale(1.05); }
+}
+
+/* ─── SCROLL PROGRESS ─── */
+.scroll-progress-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: transparent;
+  z-index: 9999;
+}
+
+.scroll-progress-bar {
+  height: 100%;
+  background: var(--accent);
+  width: 0%;
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 10px var(--accent-glow);
 }
 
 /* ─── SECTION WRAPPER ─── */
 .section-wrapper {
   position: relative;
   min-height: 100vh;
-  background: transparent;
-  transition: 0.3s ease;
-}
-
-/* ─── ANIMATED 3D BACKGROUND ORBS ─── */
-.bg-orbs {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  animation: orbFloat 12s ease-in-out infinite;
-  opacity: 0.55;
-}
-
-.orb-1 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(0, 230, 118, 0.3), transparent 70%);
-  top: -150px;
-  left: -100px;
-  animation-duration: 14s;
-  animation-delay: 0s;
-}
-
-.orb-2 {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(100, 80, 255, 0.25), transparent 70%);
-  bottom: 10%;
-  right: -80px;
-  animation-duration: 18s;
-  animation-delay: -4s;
-}
-
-.orb-3 {
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(0, 180, 230, 0.2), transparent 70%);
-  top: 40%;
-  left: 35%;
-  animation-duration: 20s;
-  animation-delay: -8s;
-}
-
-.orb-4 {
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(255, 80, 120, 0.15), transparent 70%);
-  bottom: 30%;
-  left: -50px;
-  animation-duration: 16s;
-  animation-delay: -5s;
-}
-
-@keyframes orbFloat {
-  0%   { transform: translate(0, 0) scale(1); }
-  25%  { transform: translate(30px, -40px) scale(1.05); }
-  50%  { transform: translate(-20px, 30px) scale(0.95); }
-  75%  { transform: translate(40px, 20px) scale(1.08); }
-  100% { transform: translate(0, 0) scale(1); }
-}
-
-/* Light mode - soften orbs */
-.light-mode .orb {
-  opacity: 0.25;
+  z-index: 1;
 }
 
 /* ─── SHARED UTILITIES ─── */
@@ -197,32 +225,90 @@ a {
 }
 
 .section-title {
-  font-size: 0.85rem;
-  letter-spacing: 3px;
+  font-size: 0.75rem;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  color: var(--accent);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 1rem;
 }
 
 .section-heading {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 800;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
   color: var(--text-color);
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
-/* ─── GRADIENT TEXT ─── */
 .gradient-text {
-  background: linear-gradient(135deg, var(--accent) 0%, #00cfff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-color);
+  position: relative;
+  display: inline-block;
 }
 
-/* Ensure all content is above orbs */
-section > * {
-  position: relative;
-  z-index: 1;
+.gradient-text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0.15em;
+  width: 100%;
+  height: 0.25em;
+  background: var(--accent);
+  z-index: -1;
+  transform: rotate(-1deg);
+  opacity: 0.8;
+}
+
+/* ─── PREMIUM BUTTONS ─── */
+.btn-primary-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--text-color);
+  color: var(--bg-primary);
+  font-weight: 600;
+  border-radius: 100px;
+  border: none;
+  padding: 14px 28px;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+  background: var(--accent);
+  color: var(--bg-primary);
+  transform: scale(1.02);
+}
+
+.btn-outline-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--text-color);
+  font-weight: 600;
+  border-radius: 100px;
+  border: 1px solid var(--border-color);
+  padding: 14px 28px;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-custom:hover {
+  border-color: var(--text-color);
+  background: rgba(255,255,255,0.05);
+}
+
+/* Glass panel utility */
+.glass-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
 }
 </style>
+

@@ -1,234 +1,301 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useSettingsStore } from "../stores/settings";
 import { translations } from "../constants/translations";
 
 const settings = useSettingsStore();
-const t = computed(() => translations[settings.lang]?.services || { items: [] });
+const t = computed(() => translations[settings.lang]?.services || { items: [], skills: [] });
 
-const icons = [
-  "bi-code-slash",
-  "bi-phone",
-  "bi-palette2",
-  "bi-lightning-charge",
-  "bi-diagram-3",
-  "bi-speedometer2",
-];
+const skills = computed(() => t.value.skills || [
+  { name: 'PHP', desc: 'Server-side Development', link: 'https://www.php.net' },
+  { name: 'LARAVEL', desc: 'Backend Architecture', link: 'https://laravel.com' },
+  { name: 'VUE.JS', desc: 'Interactive Interfaces', link: 'https://vuejs.org' },
+  { name: 'JAVASCRIPT', desc: 'Frontend Logic', link: 'https://developer.mozilla.org/docs/Web/JavaScript' },
+  { name: 'HTML & CSS', desc: 'Semantic Structure & Style', link: 'https://developer.mozilla.org/docs/Web' },
+  { name: 'MYSQL', desc: 'Database Design', link: 'https://www.mysql.com' }
+]);
+
+const hoveredIndex = ref(null);
+
+onMounted(() => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.animate-up').forEach(el => observer.observe(el));
+});
 </script>
 
 <template>
-  <div class="services-section">
-    <div class="container">
+  <div class="skills-section">
+
+    <div class="container pb-5">
       <!-- TITLE -->
-      <div class="text-center mb-5 section-header">
-        <p class="section-title">{{ t.title }}</p>
-        <h2 class="section-heading">{{ t.subtitle }}</h2>
-        <div class="title-line"></div>
+      <div class="section-header animate-up mb-5">
+        <p class="section-title mb-2">{{ t.title || 'CORE CAPABILITIES' }}</p>
+        <h2 class="section-heading m-0">{{ t.subtitle || 'Technologies' }}</h2>
       </div>
 
-      <!-- SERVICE CARDS: 3D FLIP -->
-      <div class="row g-4">
-        <div v-for="(service, index) in t.items" :key="index" class="col-lg-4 col-md-6">
-          <div class="flip-card" :style="{ animationDelay: (index * 0.1) + 's' }">
-            <div class="flip-inner">
-              <!-- FRONT -->
-              <div class="flip-front">
-                <div class="card-icon-wrapper">
-                  <i :class="['bi', icons[index]]"></i>
-                  <div class="icon-glow"></div>
-                </div>
-                <h4 class="card-title">{{ service.title }}</h4>
-                <div class="card-line"></div>
-                <p class="card-hint">Hover to see more</p>
-              </div>
-              <!-- BACK -->
-              <div class="flip-back">
-                <div class="back-icon">
-                  <i :class="['bi', icons[index]]"></i>
-                </div>
-                <h4 class="card-title">{{ service.title }}</h4>
-                <p class="card-desc">{{ service.desc }}</p>
-              </div>
-            </div>
+      <!-- INTERACTIVE LIST -->
+      <div class="skills-list-container animate-up" style="--delay: 0.2s">
+        <a
+          v-for="(skill, i) in skills"
+          :key="i"
+          :href="skill.link || '#'"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="skill-row"
+          @mouseenter="hoveredIndex = i"
+          @mouseleave="hoveredIndex = null"
+          :class="{ 'dimmed': hoveredIndex !== null && hoveredIndex !== i }"
+        >
+          <div class="skill-row-inner">
+            <h3 class="skill-name">{{ skill.name }}</h3>
+            <span class="skill-desc">{{ skill.desc }}</span>
+            <i class="bi bi-arrow-up-right skill-arrow"></i>
           </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrapper mt-5 pt-5">
+      <div class="marquee">
+        <div class="marquee-content">
+          <span>PHP</span>
+          <span class="separator">—</span>
+          <span>LARAVEL</span>
+          <span class="separator">—</span>
+          <span>VUE.JS</span>
+          <span class="separator">—</span>
+          <span>JAVASCRIPT</span>
+          <span class="separator">—</span>
+          <span>MYSQL</span>
+          <span class="separator">—</span>
+          <span>API</span>
+          <span class="separator">—</span>
+          <span>UI/UX</span>
+          <span class="separator">—</span>
+          <span>DEVELOPMENT</span>
+          <span class="separator">—</span>
+        </div>
+        <div class="marquee-content" aria-hidden="true">
+          <a href="https://www.php.net/"><span>PHP</span></a>
+          <span class="separator">—</span>
+          <a href="https://laravel.com/"><span>LARAVEL</span></a>
+          <span class="separator">—</span>
+          <a href="https://vuejs.org/"><span>VUE.JS</span></a>
+          <span class="separator">—</span>
+          <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><span>JAVASCRIPT</span></a>
+          <span class="separator">—</span>
+          <a href="https://www.mysql.com/"><span>MYSQL</span></a>
+          <span class="separator">—</span>
+          <a href="https://developer.mozilla.org/en-US/docs/Web/API"><span>API</span></a>
+          <span class="separator">—</span>
+          <a href="https://developer.mozilla.org/en-US/docs/Web/CSS"><span>UI/UX</span></a>
+          <span class="separator">—</span>
+          <a href="https://developer.mozilla.org/en-US/docs/Web/CSS"><span>DEVELOPMENT</span></a>
+          <span class="separator">—</span>
         </div>
       </div>
-
     </div>
+
   </div>
 </template>
 
 <style scoped>
 /* ─── SECTION ─── */
-.services-section {
+.skills-section {
+  padding: 120px 0;
   background: transparent;
-  padding: 100px 0;
+  overflow: hidden;
 }
 
-/* ─── HEADER ─── */
-.section-header {
-  animation: fadeInDown 0.8s ease both;
+/* ─── INTERACTIVE LIST ─── */
+.skills-list-container {
+  border-top: 1px solid var(--border-color);
 }
 
-.title-line {
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent), #00cfff);
-  border-radius: 3px;
-  margin: 16px auto 0;
-}
-
-/* ─── 3D FLIP CARD ─── */
-.flip-card {
-  height: 260px;
-  perspective: 1000px;
-  cursor: pointer;
-  animation: fadeInUp 0.7s ease both;
-}
-
-.flip-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.flip-card:hover .flip-inner {
-  transform: rotateY(180deg);
-}
-
-/* ─── FRONT / BACK ─── */
-.flip-front,
-.flip-back {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 30px 24px;
-  border: 1px solid var(--border-color);
-  transition: border-color 0.3s;
-}
-
-.flip-front {
-  background: var(--card-bg);
-  backdrop-filter: blur(10px);
-}
-
-.flip-back {
-  background: linear-gradient(135deg, rgba(0, 230, 118, 0.08), rgba(0, 207, 255, 0.05));
-  border-color: var(--accent);
-  transform: rotateY(180deg);
-  text-align: center;
-}
-
-/* ─── ICON ─── */
-.card-icon-wrapper {
-  position: relative;
-  width: 72px;
-  height: 72px;
-  margin-bottom: 18px;
-}
-
-.card-icon-wrapper i {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.2rem;
-  color: var(--accent);
-  z-index: 1;
-}
-
-.icon-glow {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--accent-dim);
-  animation: iconPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes iconPulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-
-  50% {
-    transform: scale(1.15);
-    opacity: 0.4;
-  }
-}
-
-.back-icon i {
-  font-size: 1.8rem;
-  color: var(--accent);
-  margin-bottom: 10px;
+.skill-row {
   display: block;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
 
-/* ─── CARD TEXT ─── */
-.card-title {
-  font-size: 1rem;
-  font-weight: 700;
+.skill-row.dimmed {
+  opacity: 0.3;
+}
+
+.skill-row-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 0;
+  transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skill-row:hover .skill-row-inner {
+  padding: 40px 24px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.skill-name {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 800;
   color: var(--text-color);
-  text-align: center;
-  margin: 0 0 8px;
-}
-
-.card-line {
-  width: 30px;
-  height: 2px;
-  background: var(--accent);
-  border-radius: 2px;
-  margin: 8px auto;
-}
-
-.card-hint {
-  font-size: 0.75rem;
-  color: var(--text-muted);
   margin: 0;
-  letter-spacing: 0.5px;
-  opacity: 0.7;
+  letter-spacing: -0.02em;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s;
 }
 
-.card-desc {
-  font-size: 0.85rem;
+.skill-row:hover .skill-name {
+  color: var(--accent);
+  transform: translateX(10px);
+}
+
+.skill-desc {
+  font-size: 1.1rem;
   color: var(--text-muted);
-  line-height: 1.65;
-  margin: 0;
+  flex: 1;
+  text-align: right;
+  padding-right: 40px;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skill-row:hover .skill-desc {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.skill-arrow {
+  font-size: 2rem;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-20px) rotate(-45deg);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skill-row:hover .skill-arrow {
+  opacity: 1;
+  transform: translateX(0) rotate(-45deg);
+}
+
+/* ─── MARQUEE ─── */
+.marquee-wrapper {
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 24px 0;
+  background: rgba(255, 255, 255, 0.02);
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  overflow: hidden;
+}
+
+.marquee {
+  display: flex;
+  white-space: nowrap;
+}
+
+.marquee:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+.marquee-content {
+  display: flex;
+  align-items: center;
+  animation: scrollMarquee 20s linear infinite;
+}
+
+.marquee-content span {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--text-muted);
+  text-transform: uppercase;
+  transition: color 0.3s, -webkit-text-stroke 0.3s;
+}
+
+.marquee-content span:hover {
+  color: var(--accent);
+  -webkit-text-stroke: 1px var(--accent);
+}
+
+.separator {
+  margin: 0 40px;
+  color: var(--accent) !important;
+  -webkit-text-stroke: 0px !important;
+}
+
+@keyframes scrollMarquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 /* ─── ANIMATIONS ─── */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-25px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.animate-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--delay, 0s);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+.animate-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .skills-section {
+    padding: 60px 0;
   }
 
-  to {
+  .skill-row-inner {
+    flex-wrap: wrap;
+    padding: 20px 0;
+  }
+
+  .skill-row:hover .skill-row-inner {
+    padding: 20px 12px;
+  }
+
+  .skill-name {
+    font-size: clamp(1.5rem, 7vw, 2.5rem);
+  }
+
+  .skill-desc {
+    flex: 100%;
+    text-align: left;
+    padding-right: 0;
+    margin-top: 8px;
+    font-size: 0.85rem;
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
+  }
+
+  .skill-arrow {
+    display: none;
+  }
+
+  .marquee-content span {
+    font-size: clamp(1.5rem, 6vw, 2.2rem);
+  }
+
+  .separator {
+    margin: 0 20px;
   }
 }
 </style>
