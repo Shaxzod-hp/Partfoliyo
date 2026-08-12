@@ -20,7 +20,7 @@ const navLinks = computed(() => [
 
 function onScroll() {
   isScrolled.value = window.scrollY > 50;
-  
+
   const sections = ["home", "about", "services", "project", "contact"];
   let current = "home";
   for (const id of sections) {
@@ -55,19 +55,13 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll));
     <div class="nav-container">
       <!-- BRAND -->
       <a href="#home" class="brand" v-magnetic="20">
-        <span class="brand-text">SHAXZOD</span>
+        <span class="brand-text">&lt;SHAXZOD<span style="color: var(--accent)">.DEV</span>/&gt;</span>
       </a>
 
       <!-- DESKTOP LINKS -->
       <div class="desktop-links d-none d-lg-flex">
-        <a 
-          v-for="link in navLinks" 
-          :key="link.id"
-          :href="link.href" 
-          class="nav-link-item"
-          :class="{ 'active': activeSection === link.id }"
-          v-magnetic="15"
-        >
+        <a v-for="link in navLinks" :key="link.id" :href="link.href" class="nav-link-item"
+          :class="{ 'active': activeSection === link.id }" v-magnetic="15">
           {{ link.label }}
         </a>
       </div>
@@ -85,12 +79,14 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll));
             <li><button class="dropdown-item" @click="settings.setLanguage('ru')">RU</button></li>
           </ul>
         </div>
-        
-        <a href="#contact" class="nav-cta" v-magnetic="20">{{ t.contact || "LET'S TALK" }} <i class="bi bi-arrow-right"></i></a>
+
+        <a href="#contact" class="nav-cta" v-magnetic="20">{{ t.contact || "LET'S TALK" }} <i
+            class="bi bi-arrow-right"></i></a>
       </div>
 
       <!-- MOBILE TOGGLE -->
-      <button class="menu-toggle d-lg-none" @click="toggleMenu" :class="{ 'open': isMenuOpen }" aria-label="Toggle Menu">
+      <button class="menu-toggle d-lg-none" @click="toggleMenu" :class="{ 'open': isMenuOpen }"
+        aria-label="Toggle Menu">
         <span></span>
         <span></span>
       </button>
@@ -102,24 +98,21 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll));
     <div class="overlay-bg"></div>
     <div class="overlay-content">
       <div class="overlay-links">
-        <a 
-          v-for="(link, index) in navLinks" 
-          :key="link.id"
-          :href="link.href" 
-          class="overlay-link"
-          :style="{ 'transition-delay': isMenuOpen ? `${0.1 + (index * 0.1)}s` : '0s' }"
-          @click="closeMenu"
-        >
+        <a v-for="(link, index) in navLinks" :key="link.id" :href="link.href" class="overlay-link"
+          :style="{ 'transition-delay': isMenuOpen ? `${0.1 + (index * 0.1)}s` : '0s' }" @click="closeMenu">
           <span class="overlay-num">{{ link.num }}</span>
           <span class="overlay-text">{{ link.label }}</span>
         </a>
       </div>
-      
+
       <div class="overlay-footer" :style="{ 'transition-delay': isMenuOpen ? '0.7s' : '0s' }">
         <div class="lang-switcher">
-          <button @click="settings.setLanguage('en'); closeMenu()" :class="{ active: settings.lang === 'en' }">EN</button>
-          <button @click="settings.setLanguage('uz'); closeMenu()" :class="{ active: settings.lang === 'uz' }">UZ</button>
-          <button @click="settings.setLanguage('ru'); closeMenu()" :class="{ active: settings.lang === 'ru' }">RU</button>
+          <button @click="settings.setLanguage('en'); closeMenu()"
+            :class="{ active: settings.lang === 'en' }">EN</button>
+          <button @click="settings.setLanguage('uz'); closeMenu()"
+            :class="{ active: settings.lang === 'uz' }">UZ</button>
+          <button @click="settings.setLanguage('ru'); closeMenu()"
+            :class="{ active: settings.lang === 'ru' }">RU</button>
         </div>
         <div class="overlay-socials">
           <a href="https://github.com/Shaxzod-hp"><i class="bi bi-github"></i></a>
@@ -207,11 +200,13 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll));
   transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.nav-link-item:hover, .nav-link-item.active {
+.nav-link-item:hover,
+.nav-link-item.active {
   color: var(--text-color);
 }
 
-.nav-link-item:hover::after, .nav-link-item.active::after {
+.nav-link-item:hover::after,
+.nav-link-item.active::after {
   transform: scaleX(1);
   transform-origin: left;
 }
