@@ -66,7 +66,7 @@ onUnmounted(() => {
       <!-- ABSTRACT VISUAL (Desktop) -->
       <div class="hero-visual d-none d-lg-block" :style="parallaxStyle">
         <div class="hero-image-wrapper">
-          <img src="../assets/images/ozim-uchun.jpg" alt="Shaxzod Isomiddinov" class="hero-image" />
+          <img :src="`${baseUrl}image/ozim-uchun.jpg`" alt="Shaxzod Isomiddinov" class="hero-image" />
         </div>
       </div>
 
@@ -248,18 +248,14 @@ onUnmounted(() => {
 }
 
 .hero-image {
-  width: 480px;
-  height: 540px;
+  width: 500px;
+  height: 500px;
   object-fit: cover;
   object-position: center;
-
-  border-radius: 30px;
-
+  border-radius: 50%;
   /* agar fonini olib tashlangan PNG bo'lsa */
   mix-blend-mode: normal;
-
   filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.4));
-
   transition: transform 0.3s ease;
 }
 
