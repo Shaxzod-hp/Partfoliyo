@@ -66,7 +66,7 @@ onUnmounted(() => {
       <!-- ABSTRACT VISUAL (Desktop) -->
       <div class="hero-visual d-none d-lg-block" :style="parallaxStyle">
         <div class="hero-image-wrapper">
-          <img src="../assets/images/ozim-uchun.png" alt="Shaxzod Isomiddinov" class="hero-image" />
+          <img src="../assets/images/ozim-uchun.jpg" alt="Shaxzod Isomiddinov" class="hero-image" />
         </div>
       </div>
 
