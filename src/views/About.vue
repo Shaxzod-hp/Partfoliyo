@@ -15,7 +15,7 @@ onMounted(() => {
       }
     });
   }, { threshold: 0.1 });
-  
+
   document.querySelectorAll('.animate-up, .stat-line').forEach(el => observer.observe(el));
 });
 
@@ -29,13 +29,13 @@ const stats = computed(() => [
 <template>
   <div class="about-section">
     <div class="container">
-      
+
       <!-- EDITORIAL HEADER -->
       <div class="about-header animate-up">
         <div class="row align-items-center">
           <div class="col-lg-10">
             <h2 class="editorial-title">
-              {{ t.editorial_title_1 }} <br/>
+              {{ t.editorial_title_1 }} <br />
               <span class="text-accent">{{ t.editorial_title_2 }}</span>
             </h2>
           </div>
@@ -46,7 +46,7 @@ const stats = computed(() => [
         <!-- LEFT: IMAGE & METADATA -->
         <div class="col-lg-4 animate-up" style="--delay: 0.2s">
           <div class="about-image-wrapper mb-5">
-            <img :src="`${baseUrl}image/ozim.jpg`" alt="Shaxzod Isomiddinov" class="profile-img" />
+            <img :src="`${baseUrl}image/ozim-uchun1.jpg`" alt="Shaxzod Isomiddinov" class="profile-img" />
           </div>
 
           <div class="metadata-block">
@@ -208,8 +208,8 @@ const stats = computed(() => [
 .animate-up {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--delay, 0s);
 }
 
@@ -222,7 +222,7 @@ const stats = computed(() => [
   .about-image-wrapper {
     margin: 0 auto 32px;
   }
-  
+
   .metadata-block {
     border-left: none;
     border-top: 1px solid var(--border-color);
@@ -232,7 +232,7 @@ const stats = computed(() => [
     flex-wrap: wrap;
     gap: 24px;
   }
-  
+
   .meta-item {
     flex: 1;
     min-width: 140px;

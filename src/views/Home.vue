@@ -27,11 +27,11 @@ const onMouseMove = (e) => {
 const animateParallax = () => {
   currentX += (targetX - currentX) * 0.05;
   currentY += (targetY - currentY) * 0.05;
-  
+
   parallaxStyle.value = {
     transform: `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentX * 0.5}deg)`
   };
-  
+
   rafId = requestAnimationFrame(animateParallax);
 };
 
@@ -44,9 +44,9 @@ onMounted(() => {
       }
     });
   }, { threshold: 0.1 });
-  
+
   document.querySelectorAll('.animate-up, .animate-fade').forEach(el => observer.observe(el));
-  
+
   if (!('ontouchstart' in window)) {
     window.addEventListener('mousemove', onMouseMove);
     animateParallax();
@@ -62,12 +62,11 @@ onUnmounted(() => {
 <template>
   <div class="hero-section">
     <div class="container hero-container">
-      
+
       <!-- ABSTRACT VISUAL (Desktop) -->
       <div class="hero-visual d-none d-lg-block" :style="parallaxStyle">
-        <div class="abstract-shape">
-          <div class="wireframe-circle"></div>
-          <div class="solid-circle"></div>
+        <div class="hero-image-wrapper">
+          <img src="../assets/images/ozim-uchun.png" alt="Shaxzod Isomiddinov" class="hero-image" />
         </div>
       </div>
 
@@ -79,10 +78,10 @@ onUnmounted(() => {
         </div>
 
         <h1 class="hero-title animate-up" style="--delay: 0.2s">
-          SHAXZOD <br/> 
+          SHAXZOD <br />
           <span class="text-accent">ISOMIDDINOV</span>
         </h1>
-        
+
         <h2 class="hero-subtitle animate-up" style="--delay: 0.3s">
           {{ t.hero_subtitle }}
         </h2>
@@ -97,7 +96,8 @@ onUnmounted(() => {
           </a>
           <div class="hero-socials">
             <a href="https://github.com/Shaxzod-hp" v-magnetic="15"><i class="bi bi-github"></i></a>
-            <a href="https://www.linkedin.com/in/shaxzod-isomiddinov-52922b366/" v-magnetic="15"><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.linkedin.com/in/shaxzod-isomiddinov-52922b366/" v-magnetic="15"><i
+                class="bi bi-linkedin"></i></a>
             <a href="https://t.me/Shaxzod_Isomiddinov" v-magnetic="15"><i class="bi bi-telegram"></i></a>
           </div>
         </div>
@@ -153,8 +153,17 @@ onUnmounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
 }
 
 .hero-title {
@@ -215,58 +224,71 @@ onUnmounted(() => {
 }
 
 /* ─── ABSTRACT VISUAL ─── */
+/* ─── HERO IMAGE ─── */
+
 .hero-visual {
   position: absolute;
   right: 0;
   top: 50%;
-  margin-top: -250px;
-  width: 500px;
-  height: 500px;
+  margin-top: -280px;
+  width: 520px;
+  height: 560px;
   pointer-events: none;
   z-index: -1;
-  opacity: 0.8;
+  opacity: 1;
 }
 
-.abstract-shape {
+.hero-image-wrapper {
   position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.wireframe-circle {
-  position: absolute;
-  inset: 50px;
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  animation: spinSlow 30s linear infinite;
-}
+.hero-image {
+  width: 480px;
+  height: 540px;
+  object-fit: cover;
+  object-position: center;
 
-.solid-circle {
-  position: absolute;
-  inset: 120px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(204, 255, 0, 0.1) 0%, transparent 100%);
-  border: 1px solid rgba(204, 255, 0, 0.2);
-  backdrop-filter: blur(5px);
-  animation: spinSlowReverse 20s linear infinite;
+  border-radius: 30px;
+
+  /* agar fonini olib tashlangan PNG bo'lsa */
+  mix-blend-mode: normal;
+
+  filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.4));
+
+  transition: transform 0.3s ease;
 }
 
 @keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes spinSlowReverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
 }
 
 /* ─── ANIMATIONS ─── */
 .animate-up {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--delay, 0s);
 }
 
@@ -281,7 +303,7 @@ onUnmounted(() => {
     padding-top: 100px;
     padding-bottom: 60px;
   }
-  
+
   .hero-actions {
     flex-direction: column;
     align-items: flex-start;
@@ -289,4 +311,3 @@ onUnmounted(() => {
   }
 }
 </style>
-
